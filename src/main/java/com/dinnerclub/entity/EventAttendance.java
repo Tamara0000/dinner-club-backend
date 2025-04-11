@@ -3,8 +3,6 @@ package com.dinnerclub.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,8 +16,6 @@ public class EventAttendance extends Auditable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_attendance_id")
     private Integer id;
-    @Column(name = "date")
-    private LocalDate date;
     @JoinColumn(name = "event_schedule_fk", referencedColumnName = "event_schedule_id")
     @ManyToOne
     private EventSchedule eventSchedule;

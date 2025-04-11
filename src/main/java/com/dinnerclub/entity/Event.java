@@ -18,5 +18,5 @@ public class Event extends Auditable {
     @Column(name = "theme", unique = true)
     private String theme;
     @Column(name = "location")
-    private Integer location;
+    private String location;
 }

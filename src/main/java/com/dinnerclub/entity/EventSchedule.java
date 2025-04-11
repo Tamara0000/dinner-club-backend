@@ -18,6 +18,10 @@ public class EventSchedule extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_schedule_id")
     private Integer id;
+    //EventSchedule can have many Events because if its cancelled, it can be rescheduled for another date
+    @JoinColumn(name = "event_fk", referencedColumnName = "event_id")
+    @ManyToOne
+    private Event event;
     @Column(name = "date")
     private LocalDate date;
     @Column(name = "completed")

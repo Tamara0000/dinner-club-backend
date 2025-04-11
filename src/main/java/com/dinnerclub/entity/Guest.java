@@ -17,7 +17,7 @@ public class Guest extends Auditable {
     @Column(name = "guest_id")
     private Integer id;
     @Column(name = "name")
-    private String theme;
+    private String name;
     @Column(name = "email", unique = true)
     private String email;
     @Column(name = "phone")
