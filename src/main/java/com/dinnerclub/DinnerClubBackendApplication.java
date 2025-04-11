@@ -1,4 +1,4 @@
-package dinner.club.dinnerclubbackend;
+package com.dinnerclub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
