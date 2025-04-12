@@ -49,16 +49,16 @@ public class EventServiceImpl implements EventService {
         List<Integer> eventScheduleIds = eventScheduleRepository.findAllByEvent_Id(updatedEvent.getId())
                 .stream().map(EventSchedule::getId).collect(Collectors.toList());
 
-        String subject = "Change od event details";
+        String subject = "Change of event details";
         boolean finalChangeOfLocation = changeOfLocation;
         boolean finalChangeOfTheme = changeOfTheme;
 
         //uncomment if you really want the mail to be sent since it's implemented
-        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_IdIn(eventScheduleIds)
-                .stream()
-                .forEach(eventAttendance -> {
-                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, MailUtil.getMailContent(finalChangeOfLocation, finalChangeOfTheme, eventAttendance));
-                });
+//        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_IdIn(eventScheduleIds)
+//                .stream()
+//                .forEach(eventAttendance -> {
+//                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, MailUtil.getMailContent(finalChangeOfLocation, finalChangeOfTheme, eventAttendance));
+//                });
         return updatedEvent;
     }
 }

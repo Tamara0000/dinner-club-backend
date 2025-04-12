@@ -53,15 +53,15 @@ public class MailUtil {
                 .append(" has been modified. ");
 
         if (changeOfLocation && changeOfTheme) {
-            mailContent.append("new location is: ");
+            mailContent.append("New location is: ");
             mailContent.append(location);
             mailContent.append(" and new theme is: ");
             mailContent.append(theme);
         } else if (changeOfLocation) {
-            mailContent.append("new location is: ");
+            mailContent.append("New location is: ");
             mailContent.append(location);
         } else {
-            mailContent.append("new theme is: ");
+            mailContent.append("New theme is: ");
             mailContent.append(theme);
         }
         return mailContent.toString();

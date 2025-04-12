@@ -88,7 +88,7 @@ public class EventScheduleServiceImpl implements EventScheduleService {
         EventSchedule updatedEventSchedule = eventScheduleRepository.save(eventSchedule);
 
         //get all guests who are attending the event and notify them about the change
-        String subject = "Change od event schedule";
+        String subject = "Change of event schedule";
         boolean finalChangeOfDate = changeOfDate;
         boolean finalChangeOfCancellation = changeOfCancellation;
         String finalBeforeDate = beforeDate;
