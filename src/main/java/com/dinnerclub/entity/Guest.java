@@ -18,6 +18,8 @@ public class Guest extends Auditable {
     private Integer id;
     @Column(name = "name")
     private String name;
+    @Column(name = "surname")
+    private String surname;
     @Column(name = "email", unique = true)
     private String email;
     @Column(name = "phone")

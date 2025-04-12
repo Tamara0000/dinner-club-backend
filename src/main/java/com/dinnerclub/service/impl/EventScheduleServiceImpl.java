@@ -7,7 +7,6 @@ import com.dinnerclub.repository.EventAttendanceRepository;
 import com.dinnerclub.repository.EventScheduleRepository;
 import com.dinnerclub.service.EventScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,10 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EventScheduleServiceImpl implements EventScheduleService {
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final MailService mailService;
     private final EventScheduleRepository eventScheduleRepository;
     private final EventAttendanceRepository eventAttendanceRepository;
-    private final MailService mailService;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 
     @Override
@@ -91,38 +90,47 @@ public class EventScheduleServiceImpl implements EventScheduleService {
         boolean finalChangeOfDate = changeOfDate;
         boolean finalChangeOfCancellation = changeOfCancellation;
         String finalBeforeDate = beforeDate;
-        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_Id(updatedEventSchedule.getId())
-                .stream()
-                .forEach(eventAttendance -> {
-                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, getMailContent(finalChangeOfDate, finalBeforeDate, finalChangeOfCancellation, eventAttendance));
-                });
+
+        //uncomment if you really want the mail to be sent
+//        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_Id(updatedEventSchedule.getId())
+//                .stream()
+//                .forEach(eventAttendance -> {
+//                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, getMailContent(finalChangeOfDate, finalBeforeDate, finalChangeOfCancellation, eventAttendance));
+//                });
 
         return updatedEventSchedule;
     }
 
     private String getMailContent(boolean changeOfDate, String beforeDate, boolean changeOfCancellation, EventAttendance eventAttendance) {
-        String mailContent;
+        String dateOfEvent = formatter.format(eventAttendance.getEventSchedule().getDate());
+        String theme = eventAttendance.getEventSchedule().getEvent().getTheme();
+        String location = eventAttendance.getEventSchedule().getEvent().getLocation();
         String cancelled = changeOfCancellation? " is cancelled" : " isn't cancelled";
 
+        StringBuilder mailContent = new StringBuilder("Dear guest, <br><br>");
+        mailContent.append("There has been a change of an event you are attending in theme ")
+                .append(theme)
+                .append(" and on location ")
+                .append(location);
+
         if(changeOfDate && changeOfCancellation){
-            mailContent = "Dear guest, <br><br>"
-                    + "There has been a change of an event you are attending in theme " + eventAttendance.getEventSchedule().getEvent().getTheme()
-                    + " and on location " + eventAttendance.getEventSchedule().getEvent().getLocation()
-                    + " from date " + beforeDate + " to " + formatter.format(eventAttendance.getEventSchedule().getDate())
-                    + " and the event " + cancelled;
+            mailContent.append("from date ")
+                    .append(beforeDate)
+                    .append(" to ")
+                    .append(dateOfEvent)
+                    .append(" .And the event ")
+                    .append(cancelled);
         }else if(changeOfDate){
-            mailContent = "Dear guest, <br><br>"
-                    + "There has been a change of an event you are attending in theme " + eventAttendance.getEventSchedule().getEvent().getTheme()
-                    + " and on location " + eventAttendance.getEventSchedule().getEvent().getLocation()
-                    + " from date " + beforeDate + " to " + formatter.format(eventAttendance.getEventSchedule().getDate());
+            mailContent.append("from date ")
+                    .append(beforeDate)
+                    .append(" to ")
+                    .append(dateOfEvent);
         }else{
-            mailContent = "Dear guest, <br><br>"
-                    + "The event you are attending in theme " + eventAttendance.getEventSchedule().getEvent().getTheme()
-                    + " and on location " + eventAttendance.getEventSchedule().getEvent().getLocation()
-                    + " taking place on " + formatter.format(eventAttendance.getEventSchedule().getDate())
-                    + cancelled;
+            mailContent.append(" taking place on ")
+                    .append(dateOfEvent)
+                    .append(cancelled);
         }
-        return mailContent;
+        return mailContent.toString();
     }
 
 }

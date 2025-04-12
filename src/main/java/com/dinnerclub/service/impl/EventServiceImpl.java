@@ -3,7 +3,6 @@ package com.dinnerclub.service.impl;
 import com.dinnerclub.entity.Event;
 import com.dinnerclub.entity.EventAttendance;
 import com.dinnerclub.entity.EventSchedule;
-import com.dinnerclub.entity.Guest;
 import com.dinnerclub.mail.MailService;
 import com.dinnerclub.repository.EventAttendanceRepository;
 import com.dinnerclub.repository.EventRepository;
@@ -20,8 +19,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
-    private final EventRepository eventRepository;
     private final MailService mailService;
+    private final EventRepository eventRepository;
     private final EventScheduleRepository eventScheduleRepository;
     private final EventAttendanceRepository eventAttendanceRepository;
 
@@ -51,36 +50,39 @@ public class EventServiceImpl implements EventService {
         String subject = "Change od event details";
         boolean finalChangeOfLocation = changeOfLocation;
         boolean finalChangeOfTheme = changeOfTheme;
-        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_IdIn(eventScheduleIds)
-                .stream()
-                .forEach(eventAttendance -> {
-                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, getMailContent(finalChangeOfLocation, finalChangeOfTheme, eventAttendance));
-                });
 
+        //uncomment if you really want the mail to be sent since it's implemented
+//        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_IdIn(eventScheduleIds)
+//                .stream()
+//                .forEach(eventAttendance -> {
+//                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, getMailContent(finalChangeOfLocation, finalChangeOfTheme, eventAttendance));
+//                });
         return updatedEvent;
     }
 
     private String getMailContent(boolean changeOfLocation, boolean changeOfTheme, EventAttendance eventAttendance) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String mailContent;
+        String dateOfEvent = formatter.format(eventAttendance.getEventSchedule().getDate());
+        String theme = eventAttendance.getEventSchedule().getEvent().getTheme();
+        String location = eventAttendance.getEventSchedule().getEvent().getLocation();
 
-        if(changeOfLocation && changeOfTheme){
-            mailContent = "Dear guest, <br><br>"
-                    + "There has been a change of event location and theme that is taking place on "
-                    + formatter.format(eventAttendance.getEventSchedule().getDate())
-                    + " to location: " + eventAttendance.getEventSchedule().getEvent().getLocation()
-                    + " and theme: " + eventAttendance.getEventSchedule().getEvent().getTheme();
-        }else if(changeOfLocation){
-            mailContent = "Dear guest, <br><br>"
-                    + "There has been a change of event location that is taking place on "
-                    + formatter.format(eventAttendance.getEventSchedule().getDate())
-                    + " to location: " + eventAttendance.getEventSchedule().getEvent().getLocation();
-        }else{
-            mailContent = "Dear guest, <br><br>"
-                    + "There has been a change of event theme that is taking place on "
-                    + formatter.format(eventAttendance.getEventSchedule().getDate())
-                    + " to theme: " + eventAttendance.getEventSchedule().getEvent().getTheme();
+        StringBuilder mailContent = new StringBuilder("Dear guest, <br><br>");
+        mailContent.append("The event that is taking place on ")
+                .append(dateOfEvent)
+                .append(" has been modified. ");
+
+        if (changeOfLocation && changeOfTheme) {
+            mailContent.append("new location is: ");
+            mailContent.append(location);
+            mailContent.append(" and new theme is: ");
+            mailContent.append(theme);
+        } else if (changeOfLocation) {
+            mailContent.append("new location is: ");
+            mailContent.append(location);
+        } else {
+            mailContent.append("new theme is: ");
+            mailContent.append(theme);
         }
-        return mailContent;
+        return mailContent.toString();
     }
 }

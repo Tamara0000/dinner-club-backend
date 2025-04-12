@@ -1,4 +1,5 @@
 # MOST RELIABLE GUEST(GET TOP 5)
+# List the top 5 guests who have confirmed and attended the most events
 # if the first one is needed just do this: select top 1 g.* and don't use LIMIT
 select g.*, count(event_attendance_id) AS attendance_count
 from event_attendance ev
@@ -33,7 +34,7 @@ from event_schedule es
 join event e on e.event_id = es.event_fk
 join event_attendance ea on es.event_schedule_id = ea.event_schedule_fk
 join guest g on ea.guest_fk = g.guest_id
-where e.theme like 'Svaki'
+where e.theme like 'Black Tie Gala'
 group by guest_fk
 having count(*) = sum(case when showed_up = true then 1 else 0 end)
 

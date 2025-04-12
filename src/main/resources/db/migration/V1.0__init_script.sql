@@ -15,6 +15,7 @@ create table if not exists guest
 (
     guest_id           int primary key auto_increment,
     name               varchar(64)  not null,
+    surname            varchar(64)  not null,
     email              text         not null unique,
     phone              varchar(128) null,
 
