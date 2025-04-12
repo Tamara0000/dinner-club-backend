@@ -14,6 +14,8 @@ SETUP:
 
 -If you want to test and see the mail implementation you can add someone manually in Guest with a gmail you can look up
 
+-Path for postman: http://localhost:8080/dinner-club/
+
 *Implementation(some clarifications)
 
 1.Secret location(automatic email reminder) - because the project is admin-orientied and there isn't register/login, the hidden location is solved by sending automatic reminder mail for the guests who confirmed their attendance with event details including reveal of the location
@@ -21,3 +23,4 @@ SETUP:
 2.Event tracking- there are endpoints for findAll Event by different criteria with List as return type, but there are also Page return type services as an example to show different services would be called in controller if the database is too big and there are many records so it would need optimization
 
 3.Analytical insights - implemented as quieres located in resources.analytical.queries
+
