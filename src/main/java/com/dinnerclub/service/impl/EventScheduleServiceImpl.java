@@ -3,6 +3,7 @@ package com.dinnerclub.service.impl;
 import com.dinnerclub.entity.EventAttendance;
 import com.dinnerclub.entity.EventSchedule;
 import com.dinnerclub.mail.MailService;
+import com.dinnerclub.mail.util.MailUtil;
 import com.dinnerclub.repository.EventAttendanceRepository;
 import com.dinnerclub.repository.EventScheduleRepository;
 import com.dinnerclub.service.EventScheduleService;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EventScheduleServiceImpl implements EventScheduleService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final MailUtil mailUtil;
     private final MailService mailService;
     private final EventScheduleRepository eventScheduleRepository;
     private final EventAttendanceRepository eventAttendanceRepository;
@@ -95,42 +97,10 @@ public class EventScheduleServiceImpl implements EventScheduleService {
 //        eventAttendanceRepository.findAllByConfirmedIsTrueAndEventSchedule_Id(updatedEventSchedule.getId())
 //                .stream()
 //                .forEach(eventAttendance -> {
-//                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, getMailContent(finalChangeOfDate, finalBeforeDate, finalChangeOfCancellation, eventAttendance));
+//                    mailService.sendMailToGuest(eventAttendance.getGuest().getEmail(), subject, MailUtil.getMailContent(finalChangeOfDate, finalBeforeDate, finalChangeOfCancellation, eventAttendance));
 //                });
 
         return updatedEventSchedule;
-    }
-
-    private String getMailContent(boolean changeOfDate, String beforeDate, boolean changeOfCancellation, EventAttendance eventAttendance) {
-        String dateOfEvent = formatter.format(eventAttendance.getEventSchedule().getDate());
-        String theme = eventAttendance.getEventSchedule().getEvent().getTheme();
-        String location = eventAttendance.getEventSchedule().getEvent().getLocation();
-        String cancelled = changeOfCancellation? " is cancelled" : " isn't cancelled";
-
-        StringBuilder mailContent = new StringBuilder("Dear guest, <br><br>");
-        mailContent.append("There has been a change of an event you are attending in theme ")
-                .append(theme)
-                .append(" and on location ")
-                .append(location);
-
-        if(changeOfDate && changeOfCancellation){
-            mailContent.append("from date ")
-                    .append(beforeDate)
-                    .append(" to ")
-                    .append(dateOfEvent)
-                    .append(" .And the event ")
-                    .append(cancelled);
-        }else if(changeOfDate){
-            mailContent.append("from date ")
-                    .append(beforeDate)
-                    .append(" to ")
-                    .append(dateOfEvent);
-        }else{
-            mailContent.append(" taking place on ")
-                    .append(dateOfEvent)
-                    .append(cancelled);
-        }
-        return mailContent.toString();
     }
 
 }

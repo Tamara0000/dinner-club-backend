@@ -36,7 +36,7 @@ public class EventScheduleController {
         return ResponseEntity.ok(eventScheduleService.findAllCompletedEvents());
     }
 
-    @Operation(summary = "All events.")
+    @Operation(summary = "All organized events.")
     @GetMapping("/all-events")
     public ResponseEntity<List<EventSchedule>> getAllEvents() {
         return ResponseEntity.ok(eventScheduleService.findAll());
